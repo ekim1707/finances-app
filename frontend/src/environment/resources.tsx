@@ -1,13 +1,10 @@
 export const resources = {
   api: {
-    baseURL: "/",
-    newService: {
-      baseEndpoint: "/",
-      // additionalEndpoint: "/additional"
-    },
+    base_url: "/",
   },
   paths: {
-    basePath: "/",
+    base_path: "/",
+    health: "/health",
   },
 };
 

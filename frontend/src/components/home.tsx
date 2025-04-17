@@ -1,4 +1,3 @@
-import React from "react";
 // import styles from "../scss/common.styles.scss";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../redux/store/store";

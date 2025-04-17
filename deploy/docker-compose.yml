@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ../frontend
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - spending
+
+  spending:
+    build: ../services/spending
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=dev
+      - FLASK_APP=app.py
