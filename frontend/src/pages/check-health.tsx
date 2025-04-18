@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../../config";
 
 export default function Health() {
   const [backendStatus, setBackendStatus] = useState("Loading...");
 
   useEffect(() => {
-    console.log(`${import.meta.env.VITE_API_URL}`);
-    fetch(`${import.meta.env.VITE_API_URL}/health`)
+    console.log(API_URL);
+    fetch(`${API_URL}/health`)
       .then((response) => response.json())
       .then((data) => {
         setBackendStatus(

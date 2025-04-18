@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { resources } from "./environment/resources";
 import HomePage from "./pages/home/homepage";
-import Health from "./pages/health";
+import Health from "./pages/check-health";
 
 export default function ApplicationRouter() {
   return (
