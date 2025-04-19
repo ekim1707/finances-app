@@ -9,9 +9,8 @@ export default function Health() {
     fetch(`${API_URL}/health`)
       .then((response) => response.json())
       .then((data) => {
-        setBackendStatus(
-          `Backend: ${data.status} (${data.service} v${data.version})`
-        );
+        console.log(data);
+        setBackendStatus(`Backend: ${data.status} (${data.service})`);
       })
       .catch((error) => {
         setBackendStatus("Backend: Unreachable");

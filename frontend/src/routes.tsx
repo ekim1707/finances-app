@@ -4,11 +4,14 @@ import HomePage from "./pages/home/homepage";
 import Health from "./pages/check-health";
 
 export default function ApplicationRouter() {
+  const basePath = import.meta.env.VITE_BASE_PATH;
+  const { paths } = resources;
   return (
-    <Router>
+    <Router basename={basePath}>
       <Routes>
-        <Route path={resources.paths.base_path} element={<HomePage />} />
-        <Route path={resources.paths.health} element={<Health />} />
+        <Route index element={<HomePage />} />
+
+        <Route path={paths.health} element={<Health />} />
       </Routes>
     </Router>
   );

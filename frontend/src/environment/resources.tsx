@@ -1,9 +1,8 @@
 export const resources = {
   api: {
-    base_url: "/",
+    baseUrl: "/",
   },
   paths: {
-    base_path: "/",
     health: "/health",
   },
 };
