@@ -34,7 +34,7 @@ jobs:
 
       - name: Build and push spending Docker image
         run: |
-          docker build -t $DOCKER_USERNAME/$SPENDING_IMAGE_NAME:latest -f ./services/spending/Dockerfile ./spending
+          docker build -t $DOCKER_USERNAME/$SPENDING_IMAGE_NAME:latest -f ./services/spending/Dockerfile ./services/spending
           docker push $DOCKER_USERNAME/$SPENDING_IMAGE_NAME:latest
 
       - name: Configure AWS credentials
