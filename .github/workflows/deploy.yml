@@ -3,6 +3,12 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [main]
+  workflow_dispatch: # Add this line to allow manual trigger
+    inputs:
+      exampleInput: # Optional: You can define inputs for the workflow
+        description: "Example input"
+        required: false
+        default: "default value"
 
 env:
   FRONTEND_IMAGE_NAME: frontend
