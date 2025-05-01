@@ -5,7 +5,8 @@ on:
     branches: [main]
 
 env:
-  IMAGE_NAME: finance-app
+  FRONTEND_IMAGE_NAME: frontend
+  SPENDING_IMAGE_NAME: spending
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
@@ -26,10 +27,15 @@ jobs:
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ env.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push frontend Docker image
         run: |
-          docker build -t $DOCKER_USERNAME/$IMAGE_NAME:latest .
-          docker push $DOCKER_USERNAME/$IMAGE_NAME:latest
+          docker build -t $DOCKER_USERNAME/$FRONTEND_IMAGE_NAME:latest -f ./frontend/Dockerfile ./frontend
+          docker push $DOCKER_USERNAME/$FRONTEND_IMAGE_NAME:latest
+
+      - name: Build and push spending Docker image
+        run: |
+          docker build -t $DOCKER_USERNAME/$SPENDING_IMAGE_NAME:latest -f ./spending/Dockerfile ./spending
+          docker push $DOCKER_USERNAME/$SPENDING_IMAGE_NAME:latest
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
