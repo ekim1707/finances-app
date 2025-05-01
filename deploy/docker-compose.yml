@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ../frontend
+    image: ekim1707/frontend:latest
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://spending:5000
+    depends_on:
+      - spending
+
+  spending:
+    build: ../services/spending
+    image: ekim1707/spending:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=dev
+      - FLASK_APP=app.py

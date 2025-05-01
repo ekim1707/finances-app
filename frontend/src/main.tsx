@@ -1,11 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.scss";
-// import App from "./App.tsx";
-import Router from "./routes.tsx";
+import { Provider } from "react-redux";
+import { store } from "./redux/store/store.ts";
+import AppConfigured from "./components/app-configured.tsx";
+import "semantic-ui-css/semantic.min.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Router />
+    <Provider store={store}>
+      <AppConfigured />
+    </Provider>
   </StrictMode>
 );

@@ -1,17 +1,18 @@
-output "eks_cluster_name" {
-    description = "EKS cluster name"
-    value = module.eks.cluster_name
+output "cluster_endpoint" {
+  description = "The endpoint of the EKS cluster."
+  value       = module.eks.cluster_endpoint
 }
 
-output "eks_cluster_endpoint" {
-    description = "EKS cluster endpoint"
-    value = module.eks.cluster_endpoint
+output "cluster_name" {
+  description = "The name of the EKS cluster."
+  value       = module.eks.cluster_name
 }
 
-output "eks_cluster_security_group_id" {
-    description = "ECR repository URLs"
-    value = {
-        for repo in aws_ecr_repository.services :
-        repo.name => repo.repository_url
-    }
+# output "node_role_arn" {
+#   description = "The ARN of the node role."
+#   value       = aws_iam_role.node_role.arn
+# }
+
+output "cluster_security_group_id" {
+  value = module.eks.cluster_security_group_id
 }
