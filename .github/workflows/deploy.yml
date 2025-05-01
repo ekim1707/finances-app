@@ -54,4 +54,4 @@ jobs:
         run: aws eks update-kubeconfig --region us-east-1 --name finances-app-cluster-v2
 
       - name: Apply Kubernetes manifests
-        run: kubectl apply -f infra/k8s/base
+        run: kubectl apply -k infra/k8s/base
