@@ -8,7 +8,6 @@ env:
   IMAGE_NAME: finance-app
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  ECR_REPO_URI: ${{ secrets.ECR_REPO_URI }}
 
 jobs:
   build-and-deploy:
@@ -43,4 +42,4 @@ jobs:
         run: aws eks update-kubeconfig --region us-east-1 --name finances-app-cluster
 
       - name: Apply Kubernetes manifests
-        run: kubectl apply -f k8s/
+        run: kubectl apply -f infra/k8s/
