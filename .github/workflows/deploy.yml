@@ -1,57 +1,64 @@
-name: CI/CD Pipeline
+# -------------------- .github/workflows/deploy.yml --------------------
+name: Deploy to EC2 with CodeDeploy
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch: # Add this line to allow manual trigger
-    inputs:
-      exampleInput: # Optional: You can define inputs for the workflow
-        description: "Example input"
-        required: false
-        default: "default value"
-
-env:
-  FRONTEND_IMAGE_NAME: frontend
-  SPENDING_IMAGE_NAME: spending
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          username: ${{ env.DOCKER_USERNAME }}
-          password: ${{ env.DOCKER_PASSWORD }}
+          python-version: "3.11"
 
-      - name: Build and push frontend Docker image
-        run: |
-          docker build -t $DOCKER_USERNAME/$FRONTEND_IMAGE_NAME:latest -f ./frontend/Dockerfile ./frontend
-          docker push $DOCKER_USERNAME/$FRONTEND_IMAGE_NAME:latest
-
-      - name: Build and push spending Docker image
-        run: |
-          docker build -t $DOCKER_USERNAME/$SPENDING_IMAGE_NAME:latest -f ./services/spending/Dockerfile ./services/spending
-          docker push $DOCKER_USERNAME/$SPENDING_IMAGE_NAME:latest
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Set up Node
+        uses: actions/setup-node@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          node-version: "18"
 
-      - name: Update kubeconfig
-        run: aws eks update-kubeconfig --region us-east-1 --name finances-app-cluster-v2
+      - name: Build React frontend
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm run build
 
-      - name: Apply Kubernetes manifests
-        run: kubectl apply -k infra/k8s/base
+      - name: Build FastAPI backend
+        working-directory: ./backend
+        run: |
+          pip install -r requirements.txt
+
+      - name: Package Docker Compose
+        run: |
+          zip -r deploy.zip appspec.yml docker-compose.yml frontend backend scripts
+
+      - name: Upload to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --exact-timestamps --delete
+        env:
+          AWS_S3_BUCKET: my-app-codedeploy-artifacts-bucket
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1
+          SOURCE_DIR: ./
+
+      - name: Trigger CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name docker-app \
+            --deployment-group-name docker-app-group \
+            --s3-location bucket=my-app-codedeploy-artifacts-bucket,bundleType=zip,key=deploy.zip \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --file-exists-behavior OVERWRITE
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1

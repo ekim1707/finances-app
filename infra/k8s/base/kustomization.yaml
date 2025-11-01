@@ -7,3 +7,4 @@ resources:
   - namespace.yaml
   - frontend-deployment.yaml
   - spending-deployment.yaml
+  - ingress.yaml
